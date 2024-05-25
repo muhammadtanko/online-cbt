@@ -6,28 +6,13 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 const Register = () => {
-    const chapters = [
-        { code: "USA/Canada", name: "USA/Canada" },
-        { code: "abuja", name: "Abuja" },
-        { code: "UK", name: "United Kingdom" },
-        { code: "Niger", name: "Niger State" },
-        { code: "Rivers", name: "Rivers State" },
-        { code: "Lagos", name: "Lagos" },
-    ];
-
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: currentYear - 1989 + 1 }, (_, index) => currentYear - index);
-
     const navigate = useNavigate();
-
     const validationSchema = Yup.object().shape({
         firstName: Yup.string().required("First Name is required"),
         lastName: Yup.string().required("Last Name is required"),
         email: Yup.string().email("Invalid email format").required("Email is required"),
         password: Yup.string().required("Password is required"),
-        chapter: Yup.string().required("Chapter is required"),
-        graduationYear: Yup.string().required("Year of Graduation is required"),
-        DOB: Yup.date().required("Date of Birth is required"),
+        // DOB: Yup.date().required("Date of Birth is required"),
     });
 
     const handleSubmit = (values) => {
@@ -47,14 +32,12 @@ const Register = () => {
                         lastName: '',
                         email: '',
                         password: '',
-                        chapter: '',
-                        graduationYear: '',
-                        DOB: null,
+                        // DOB: null,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({ setFieldValue, isValid, dirty }) => (
+                    {({  isValid, dirty }) => (
                         <Form className="flex flex-col md:flex-row flex-wrap gap-4">
                             <div className="w-full md:w-[48%]">
                                 <Field as={TextInput} name="firstName" className="focus:border-blue-500 w-full" type="text" placeholder="First Name" shadow />
@@ -72,33 +55,7 @@ const Register = () => {
                                 <Field as={TextInput} name="password" className="focus:border-blue-500 w-full" icon={HiEye} type="password" placeholder="Password" shadow />
                                 <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
                             </div>
-                            <div className="w-full md:w-[48%]">
-                                <Field as="select" name="chapter" className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full">
-                                    <option value="" disabled>
-                                        Choose a Chapter
-                                    </option>
-                                    {chapters.map((chapter) => (
-                                        <option key={chapter.code} value={chapter.code}>
-                                            {chapter.name}
-                                        </option>
-                                    ))}
-                                </Field>
-                                <ErrorMessage name="chapter" component="div" className="text-red-500 text-xs" />
-                            </div>
-                            <div className="w-full md:w-[48%]">
-                                <Field as="select" name="graduationYear" className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full">
-                                    <option value="" disabled >
-                                        Year of Graduation
-                                    </option>
-                                    {years.map((year) => (
-                                        <option key={year} value={year}>
-                                            {year}
-                                        </option>
-                                    ))}
-                                </Field>
-                                <ErrorMessage name="graduationYear" component="div" className="text-red-500 text-xs" />
-                            </div>
-                            <div className="w-full md:w-[48%]">
+                            {/* <div className="w-full md:w-[48%]">
                                 <Label htmlFor="DOB" value="Date Of Birth" />
                                 <Field name="DOB">
                                     {({ field }) => (
@@ -112,7 +69,7 @@ const Register = () => {
                                     )}
                                 </Field>
                                 <ErrorMessage name="dateOfBirth" component="div" className="text-red-500 text-xs" />
-                            </div>
+                            </div> */}
                             <div className="w-full flex justify-end mt-3 md:mt-8">
                                 <Button
                                     disabled={!(isValid && dirty)}
