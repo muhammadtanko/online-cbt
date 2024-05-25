@@ -31,11 +31,8 @@ const Login = () => {
         },
         body: JSON.stringify(values),
       });
-      console.log("res>>>", response);
-      console.log("status>>>", response.status);
       
       const data = await response.json();
-      console.log("data>>>", data);
 
       if (response.status === 201) {
         setMessage(data.payLoad);

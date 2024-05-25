@@ -33,7 +33,7 @@ const Register = () => {
                 setTimeout(() => {
                     navigate("/")
                 }, 1500)
-                // navigate("/")
+                navigate("/login")
             } else {
                 setMessage('An error occurred. Please try again.');
                 setIsError(true);
