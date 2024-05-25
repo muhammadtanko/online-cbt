@@ -38,7 +38,7 @@ const Login = () => {
         setMessage(data.payLoad);
         resetForm();
         setTimeout(() => {
-          navigate("/home")
+          navigate("/exam")
         }, 1500);
       } else {
         setMessage(data.message);
