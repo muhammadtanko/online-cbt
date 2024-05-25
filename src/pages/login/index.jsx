@@ -3,16 +3,56 @@ import { Button, Label, TextInput } from "flowbite-react";
 import { HiMail, HiEye } from "react-icons/hi";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
+import { useState } from "react";
+import { Spinner } from "flowbite-react";
 
 const Login = () => {
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate("/register");
   };
 
-  const handleSubmit = (values) => {
-    console.log(values);
+  const handleSubmit = async (values, { resetForm }) => {
+    setLoading(true);
+    setMessage('');
+    setIsError(false);
+
+    try {
+      const response = await fetch('https://online-cbt-server.onrender.com/api/v1/user/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      console.log("res>>>", response);
+      console.log("status>>>", response.status);
+      
+      const data = await response.json();
+      console.log("data>>>", data);
+
+      if (response.status === 201) {
+        setMessage(data.payLoad);
+        resetForm();
+        setTimeout(() => {
+          navigate("/")
+        }, 1500);
+      } else {
+        setMessage(data.message);
+        setIsError(true);
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again.');
+      setIsError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const validationSchema = Yup.object({
@@ -94,12 +134,17 @@ const Login = () => {
               <Button
                 disabled={!(isValid && dirty)}
                 className="bg-bgDArk" type="submit">
-                Login
+                {loading ? <Spinner size="sm" /> : 'Login'}
               </Button>
 
             </Form>
           )}
         </Formik>
+        {message && (
+          <div className={`mt-4 text-center ${isError ? 'text-red-500' : 'text-green-500'}`}>
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );

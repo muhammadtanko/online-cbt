@@ -1,11 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { Button, TextInput, Label } from "flowbite-react";
 import { HiMail, HiEye } from "react-icons/hi";
-import { Datepicker } from "flowbite-react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
+import { useState } from "react";
+import { Spinner } from "flowbite-react";
 
 const Register = () => {
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState('');
+    const [isError, setIsError] = useState(false);
     const navigate = useNavigate();
     const validationSchema = Yup.object().shape({
         firstName: Yup.string().required("First Name is required"),
@@ -15,9 +20,32 @@ const Register = () => {
         // DOB: Yup.date().required("Date of Birth is required"),
     });
 
-    const handleSubmit = (values) => {
-        console.log("ran>>>>");
-        console.log(values);
+    const handleSubmit = async (values, { resetForm }) => {
+        setLoading(true);
+        setMessage('');
+        setIsError(false);
+        try {
+            const response = await axios.post('https://online-cbt-server.onrender.com/api/v1/user', values);
+            const { data } = response;
+            if (response.status == 201) {
+                setMessage('Registration successful!');
+                resetForm();
+                setTimeout(() => {
+                    navigate("/")
+                }, 1500)
+                // navigate("/")
+            } else {
+                setMessage('An error occurred. Please try again.');
+                setIsError(true);
+            }
+        } catch (error) {
+            setMessage('An error occurred. Please try again.');
+            setIsError(true);
+        } finally {
+            setLoading(false);
+        }
+
+
     };
 
     return (
@@ -37,7 +65,7 @@ const Register = () => {
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({  isValid, dirty }) => (
+                    {({ isValid, dirty }) => (
                         <Form className="flex flex-col md:flex-row flex-wrap gap-4">
                             <div className="w-full md:w-[48%]">
                                 <Field as={TextInput} name="firstName" className="focus:border-blue-500 w-full" type="text" placeholder="First Name" shadow />
@@ -55,32 +83,22 @@ const Register = () => {
                                 <Field as={TextInput} name="password" className="focus:border-blue-500 w-full" icon={HiEye} type="password" placeholder="Password" shadow />
                                 <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
                             </div>
-                            {/* <div className="w-full md:w-[48%]">
-                                <Label htmlFor="DOB" value="Date Of Birth" />
-                                <Field name="DOB">
-                                    {({ field }) => (
-                                        <input
-                                            type="date"
-                                            id="DOB"
-                                            {...field}
-                                            className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"
-                                            onChange={(e) => setFieldValue("DOB", e.target.value)}
-                                        />
-                                    )}
-                                </Field>
-                                <ErrorMessage name="dateOfBirth" component="div" className="text-red-500 text-xs" />
-                            </div> */}
                             <div className="w-full flex justify-end mt-3 md:mt-8">
                                 <Button
                                     disabled={!(isValid && dirty)}
                                     className="bg-bgDArk w-full md:w-1/3" type="submit"
                                 >
-                                    Register
+                                    {loading ? <Spinner size="sm" /> : 'Register'}
                                 </Button>
                             </div>
                         </Form>
                     )}
                 </Formik>
+                {message && (
+                    <div className={`mt-4 text-center ${isError ? 'text-red-500' : 'text-green-500'}`}>
+                        {message}
+                    </div>
+                )}
             </div>
         </div>
     );
