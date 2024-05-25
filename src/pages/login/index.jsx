@@ -38,7 +38,7 @@ const Login = () => {
         setMessage(data.payLoad);
         resetForm();
         setTimeout(() => {
-          navigate("/")
+          navigate("/home")
         }, 1500);
       } else {
         setMessage(data.message);
